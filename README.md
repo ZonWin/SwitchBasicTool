@@ -56,6 +56,30 @@ python3 -m pip install -e .
 python3 -m pip install paramiko
 ```
 
+### Windows 安装与单元测试
+
+如果你在 Windows 上使用，推荐直接用 `PowerShell`：
+
+```powershell
+cd D:\path\to\SwitchBasicTool
+
+py -3.12 -m venv .venv
+.venv\Scripts\Activate.ps1
+
+python -m pip install -U pip
+python -m pip install -e .
+
+python -m unittest discover -s tests -p "test_*.py"
+```
+
+如果 `Activate.ps1` 因执行策略被阻止，可以先执行：
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+```
+
+如果你的环境里 `python` 命令不可用，也可以把上面的 `python` 全部替换成 `py`。
+
 ## 目录结构
 
 ```text
@@ -326,6 +350,23 @@ python3 manual_test.py --list-vendors
 
 ```bash
 python3 -m switchbasictool --help
+```
+
+### Windows PowerShell 示例
+
+Windows 下也可以直接用 `PowerShell` 做手工联调：
+
+```powershell
+python -m switchbasictool --list-vendors
+```
+
+```powershell
+python -m switchbasictool `
+  --host 10.10.10.10 `
+  --protocol ssh `
+  --username admin `
+  --vendor huawei `
+  --command "display version"
 ```
 
 ### 基础 SSH 示例
