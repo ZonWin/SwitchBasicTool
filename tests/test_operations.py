@@ -4,7 +4,13 @@ import unittest
 from types import SimpleNamespace
 
 from switchbasictool import CommandResult, OperationNotSupportedError, get_operations
-from switchbasictool.operations import BaseOperations, H3COperations, HuaweiOperations, get_operations_class
+from switchbasictool.operations import (
+    BaseOperations,
+    H3COperations,
+    HuaweiOperations,
+    ZTEOperations,
+    get_operations_class,
+)
 
 
 class FakeClient:
@@ -31,6 +37,10 @@ class OperationsFactoryTests(unittest.TestCase):
     def test_h3c_alias_resolves_to_h3c_operations(self) -> None:
         self.assertIs(get_operations_class("comware"), H3COperations)
         self.assertIs(get_operations_class("h3c_comware"), H3COperations)
+
+    def test_zte_alias_resolves_to_zte_operations(self) -> None:
+        self.assertIs(get_operations_class("zxr10"), ZTEOperations)
+        self.assertIs(get_operations_class("8900e"), ZTEOperations)
 
     def test_unknown_vendor_falls_back_to_base_operations(self) -> None:
         self.assertIs(get_operations_class("unknown_vendor"), BaseOperations)
@@ -109,6 +119,62 @@ class H3COperationsTests(unittest.TestCase):
                 ("display current-configuration interface Ten-GigabitEthernet1/0/1", None),
             ],
         )
+
+
+class ZTEOperationsTests(unittest.TestCase):
+    def test_zte_manual_aligned_commands(self) -> None:
+        client = FakeClient("zte")
+        operations = ZTEOperations(client)
+
+        operations.get_version()
+        operations.get_hostname()
+        operations.get_interface_brief()
+        operations.get_ip_interface_brief(timeout=2.5)
+        operations.get_vlan_summary()
+        operations.get_mac_table()
+        operations.get_arp_table()
+        operations.get_lldp_neighbors()
+        operations.get_running_config()
+        operations.get_current_config_snippet("hostname")
+
+        self.assertEqual(
+            client.calls,
+            [
+                ("show version", None),
+                ("show running-config | include hostname", None),
+                ("show interface brief", None),
+                ("show ip interface brief", 2.5),
+                ("show vlan", None),
+                ("show mac table", None),
+                ("show arp", None),
+                ("show lldp neighbor", None),
+                ("show running-config", None),
+                ("show running-config | include hostname", None),
+            ],
+        )
+
+    def test_zte_supported_operations_match_manual_verified_set(self) -> None:
+        operations = ZTEOperations(FakeClient("zte"))
+        self.assertEqual(
+            operations.supported_operations(),
+            (
+                "get_version",
+                "get_hostname",
+                "get_interface_brief",
+                "get_ip_interface_brief",
+                "get_vlan_summary",
+                "get_mac_table",
+                "get_arp_table",
+                "get_lldp_neighbors",
+                "get_running_config",
+                "get_current_config_snippet",
+            ),
+        )
+
+    def test_zte_port_config_is_not_enabled_without_manual_evidence(self) -> None:
+        operations = ZTEOperations(FakeClient("zte"))
+        with self.assertRaises(OperationNotSupportedError):
+            operations.get_port_config("gei-0/1/1")
 
 
 class BaseOperationsTests(unittest.TestCase):

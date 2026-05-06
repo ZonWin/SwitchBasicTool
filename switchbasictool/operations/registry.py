@@ -46,6 +46,7 @@ def get_operations(client: NetworkDeviceClient) -> BaseOperations:
 
 from .h3c import H3COperations  # noqa: E402
 from .huawei import HuaweiOperations  # noqa: E402
+from .zte import ZTEOperations  # noqa: E402
 
 
 register_operations_class("generic", BaseOperations)
@@ -56,3 +57,7 @@ register_operations_class("hw", HuaweiOperations)
 register_operations_class("h3c", H3COperations)
 register_operations_class("comware", H3COperations)
 register_operations_class("h3c_comware", H3COperations)
+register_operations_class("zte", ZTEOperations)
+register_operations_class("zxr10", ZTEOperations)
+register_operations_class("zte_zxr10", ZTEOperations)
+register_operations_class("8900e", ZTEOperations)

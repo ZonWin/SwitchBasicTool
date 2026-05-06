@@ -195,9 +195,9 @@ with NetworkDeviceClient(config) as client:
     print(client.send_command("show version").output)
 ```
 
-### Huawei / H3C 常用函数层
+### Huawei / H3C / ZTE 常用函数层
 
-在底层 `send_command()` 之上，项目现在提供了一层轻量的厂商常用函数封装，当前优先覆盖 `huawei` 和 `h3c`：
+在底层 `send_command()` 之上，项目现在提供了一层轻量的厂商常用函数封装，当前优先覆盖 `huawei`、`h3c` 和 `zte`：
 
 ```python
 from switchbasictool import ConnectionConfig, NetworkDeviceClient, get_operations
@@ -220,6 +220,7 @@ with NetworkDeviceClient(config) as client:
 ```
 
 当前这层统一先返回 `CommandResult`，方便在保留原始回显的前提下逐步继续扩展结构化解析。
+其中 ZTE 还补了 `get_ip_interface_brief()` 这一类和手册命令直接对应的常用查询入口。
 
 ## `ConnectionConfig` 常用参数
 

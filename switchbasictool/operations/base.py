@@ -13,6 +13,7 @@ class BaseOperations:
     version_command: str | None = None
     hostname_command: str | None = None
     interface_brief_command: str | None = None
+    ip_interface_brief_command: str | None = None
     vlan_summary_command: str | None = None
     mac_table_command: str | None = None
     arp_table_command: str | None = None
@@ -35,6 +36,7 @@ class BaseOperations:
                 ("get_version", self.version_command is not None),
                 ("get_hostname", self.hostname_command is not None),
                 ("get_interface_brief", self.interface_brief_command is not None),
+                ("get_ip_interface_brief", self.ip_interface_brief_command is not None),
                 ("get_vlan_summary", self.vlan_summary_command is not None),
                 ("get_mac_table", self.mac_table_command is not None),
                 ("get_arp_table", self.arp_table_command is not None),
@@ -57,6 +59,13 @@ class BaseOperations:
         return self._run_named_command(
             self.interface_brief_command,
             "get_interface_brief",
+            timeout=timeout,
+        )
+
+    def get_ip_interface_brief(self, timeout: float | None = None) -> CommandResult:
+        return self._run_named_command(
+            self.ip_interface_brief_command,
+            "get_ip_interface_brief",
             timeout=timeout,
         )
 
