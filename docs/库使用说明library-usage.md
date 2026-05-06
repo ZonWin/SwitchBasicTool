@@ -2,7 +2,7 @@
 
 本文仅面向“作为 Python 库调用”，不涉及 CLI 参数说明。
 
-## 一、对象关系（先看这个）
+## 一、对象关系（建议先阅读）
 
 调用链是：
 
@@ -38,7 +38,7 @@ config = ConnectionConfig(
 - `result.raw_output`：设备原始输出
 - `result.duration`：执行耗时（秒）
 
-## 三、场景 1：直接连接交换机，执行单次命令并返回结果
+## 三、场景 1：连接交换机并执行单次命令
 
 ```python
 from switchbasictool import ConnectionConfig, NetworkDeviceClient
@@ -62,7 +62,7 @@ print(run_once())
 说明：
 
 - `with` 会自动 `connect()` 和 `disconnect()`。
-- 只执行一次命令时，推荐这种写法，最不容易漏关连接。
+- 仅执行一次命令时，推荐使用该写法，可降低遗漏关闭连接的风险。
 
 ## 四、场景 2：连接交换机后，多次发送命令并返回结果
 

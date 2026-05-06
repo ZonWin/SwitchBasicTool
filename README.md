@@ -8,7 +8,7 @@
 - 统一的发送命令与接收回显接口
 - 基于厂商 profile 的默认提示符、分页和初始化命令
 - 适合作为库文件被其他项目直接调用
-- 自带一个命令行手工测试脚本，方便拿真实交换机联调
+- 自带一个命令行手工测试脚本，便于与真实交换机联调
 
 ## 设计文档
 
@@ -31,7 +31,7 @@
 - 按厂商解析结构化命令结果
 - 配置变更事务控制
 
-如果后面要扩展 Huawei / H3C / ZTE / Cisco / Aruba 的专属操作类，建议继续复用现在这层底座。
+如需扩展 Huawei / H3C / ZTE / Cisco / Aruba 的专属操作类，建议继续复用当前底座。
 
 ## 安装
 
@@ -46,7 +46,7 @@
 在项目根目录执行：
 
 ```bash
-cd /home/zonwin/projects/SwitchBasicTool
+cd ./SwitchBasicTool
 python3 -m pip install -e .
 ```
 
@@ -58,7 +58,7 @@ python3 -m pip install paramiko
 
 ### Windows 安装与单元测试
 
-如果你在 Windows 上使用，推荐直接用 `PowerShell`：
+在 Windows 环境中，建议使用 `PowerShell`：
 
 ```powershell
 cd D:\path\to\SwitchBasicTool
@@ -72,13 +72,13 @@ python -m pip install -e .
 python -m unittest discover -s tests -p "test_*.py"
 ```
 
-如果 `Activate.ps1` 因执行策略被阻止，可以先执行：
+如果 `Activate.ps1` 因执行策略被阻止，可先执行：
 
 ```powershell
 Set-ExecutionPolicy -Scope Process Bypass
 ```
 
-如果你的环境里 `python` 命令不可用，也可以把上面的 `python` 全部替换成 `py`。
+如果当前环境中 `python` 命令不可用，可将上文中的 `python` 全部替换为 `py`。
 
 ## 目录结构
 
@@ -130,11 +130,11 @@ SwitchBasicTool/
 2. 连续调用 `send_command()` / `send_commands()`
 3. `disconnect()` 断开连接
 
-也就是说，它支持长连接会话模式，适合你后面做批量运维或交互式操作。
+该实现支持长连接会话模式，适合后续开展批量运维或交互式操作。
 
 ## 作为库调用
 
-### 最简单的单条命令示例
+### 单条命令示例（最小配置）
 
 ```python
 from switchbasictool import ConnectionConfig, NetworkDeviceClient
@@ -223,7 +223,7 @@ with NetworkDeviceClient(config) as client:
 
 ### Huawei / H3C / ZTE / Cisco / Aruba 常用函数层
 
-在底层 `send_command()` 之上，项目现在提供了一层轻量的厂商常用函数封装，当前优先覆盖 `huawei`、`h3c`、`zte`、`cisco_ios` 和 `aruba_aoscx`：
+在底层 `send_command()` 之上，项目提供了轻量的厂商常用函数封装，当前优先覆盖 `huawei`、`h3c`、`zte`、`cisco_ios` 和 `aruba_aoscx`：
 
 ```python
 from switchbasictool import ConnectionConfig, NetworkDeviceClient, get_operations
@@ -245,9 +245,9 @@ with NetworkDeviceClient(config) as client:
     print(ops.get_current_config_snippet("sysname").output)
 ```
 
-当前这层统一先返回 `CommandResult`，方便在保留原始回显的前提下逐步继续扩展结构化解析。
-其中 ZTE、Cisco、Aruba 都补了 `get_ip_interface_brief()` 这一类和各自 CLI 习惯直接对应的常用查询入口。
-Aruba 当前按 `AOS-CX` 体系实现，建议用 `vendor="aruba_aoscx"`，`aruba` / `aruba_cx` / `aoscx` 这些别名也可以直接使用。
+当前统一返回 `CommandResult`，便于在保留原始回显的前提下逐步扩展结构化解析。
+其中 ZTE、Cisco、Aruba 已补充 `get_ip_interface_brief()` 等与各自 CLI 习惯对应的常用查询入口。
+Aruba 当前按 `AOS-CX` 体系实现，建议使用 `vendor="aruba_aoscx"`，`aruba` / `aruba_cx` / `aoscx` 等别名同样可用。
 
 ## `ConnectionConfig` 常用参数
 
@@ -284,7 +284,7 @@ Aruba 当前按 `AOS-CX` 体系实现，建议用 `vendor="aruba_aoscx"`，`arub
 - `ssh_local_version`
   - 覆盖本地 SSH 版本串
 
-更完整字段可以参考 [models.py](/home/zonwin/projects/SwitchBasicTool/switchbasictool/models.py:10)。
+更完整字段可以参考 [models.py](./SwitchBasicTool/switchbasictool/models.py:10)。
 
 ## 命令结果 `CommandResult`
 
@@ -310,7 +310,7 @@ Aruba 当前按 `AOS-CX` 体系实现，建议用 `vendor="aruba_aoscx"`，`arub
 推荐在项目根目录执行：
 
 ```bash
-cd /home/zonwin/projects/SwitchBasicTool
+cd ./SwitchBasicTool
 ```
 
 ### 三种启动方式
@@ -339,10 +339,10 @@ python3 manual_test.py --list-vendors
 switchbasictool-manual-test --list-vendors
 ```
 
-如果你当前就在 `switchbasictool/` 包目录里，也可以直接运行：
+如果当前位于 `switchbasictool/` 包目录，也可直接运行：
 
 ```bash
-cd /home/zonwin/projects/SwitchBasicTool/switchbasictool
+cd ./SwitchBasicTool/switchbasictool
 python3 manual_test.py --list-vendors
 ```
 
@@ -354,7 +354,7 @@ python3 -m switchbasictool --help
 
 ### Windows PowerShell 示例
 
-Windows 下也可以直接用 `PowerShell` 做手工联调：
+Windows 下也可使用 `PowerShell` 进行手工联调：
 
 ```powershell
 python -m switchbasictool --list-vendors
@@ -457,7 +457,7 @@ python3 -m switchbasictool \
 
 ### 不写命令时的默认行为
 
-如果没有传 `--command` 或 `--command-file`，但传了 `--interactive`，脚本会直接进入交互模式。
+如果未传入 `--command` 或 `--command-file`，但传入了 `--interactive`，脚本将进入交互模式。
 
 如果既没有传命令，也没有开启 `--interactive`，脚本会按厂商尝试一组默认 smoke-test 命令：
 
@@ -490,7 +490,7 @@ python3 -m switchbasictool \
 - `--password`
   - 登录密码
 - `--ask-password`
-  - 即使没传 `--password` 也强制交互输入密码
+  - 即使未传入 `--password` 也强制交互输入密码
 - `--key-file`
   - SSH 私钥文件
 - `--allow-agent`
@@ -629,7 +629,7 @@ config = ConnectionConfig(
 )
 ```
 
-如果只想针对当前设备做一点覆盖，也可以直接改配置，不必重新注册：
+如果仅需针对当前设备做局部覆盖，也可直接修改配置，无需重新注册：
 
 ```python
 config = ConnectionConfig(
@@ -653,7 +653,7 @@ config = ConnectionConfig(
 - 默认尝试去掉首行命令回显
 - 尝试去掉最后一行设备提示符
 
-如果你想看最原始的设备返回，命令行里可以加 `--show-raw`。
+如果需要查看最原始的设备返回，可在命令行中增加 `--show-raw`。
 
 ## 常见问题
 
@@ -663,7 +663,7 @@ config = ConnectionConfig(
 
 一个 `NetworkDeviceClient` 建连后，可以持续发送多条命令，直到你显式调用 `disconnect()` 或退出 `with` 上下文。
 
-### 2. 设备提示符识别不对怎么办
+### 2. 设备提示符识别异常时如何处理
 
 优先尝试：
 
@@ -689,7 +689,7 @@ python3 -m switchbasictool \
 可以：
 
 - 通过 `--disable-vendor-init` 先观察设备原始行为
-- 用 `--show-raw` 看分页提示长什么样
+- 用 `--show-raw` 查看分页提示的具体形式
 - 在自定义 `VendorProfile` 里补 `more_patterns`
 
 ### 4. SSH 报 `Error reading SSH protocol banner`
@@ -701,7 +701,7 @@ python3 -m switchbasictool \
 - 源地址被 ACL / 管理策略限制
 - 设备响应过慢
 
-可以先探测目标是否返回有效 SSH banner：
+可先探测目标是否返回有效 SSH banner：
 
 ```bash
 python3 -m switchbasictool \
@@ -721,7 +721,7 @@ python3 -m switchbasictool \
   --command "display version"
 ```
 
-如果后续报错变成算法兼容问题，再试：
+如果后续报错变为算法兼容问题，可进一步尝试：
 
 ```bash
 python3 -m switchbasictool \
@@ -744,12 +744,12 @@ python3 -m switchbasictool \
 
 ## 代码入口参考
 
-如果你后续准备继续扩展，建议先看这几个文件：
+如果后续计划继续扩展，建议优先阅读以下文件：
 
-- [client.py](/home/zonwin/projects/SwitchBasicTool/switchbasictool/client.py:13)
-- [models.py](/home/zonwin/projects/SwitchBasicTool/switchbasictool/models.py:10)
-- [vendors.py](/home/zonwin/projects/SwitchBasicTool/switchbasictool/vendors.py:13)
-- [switchbasictool/manual_test.py](/home/zonwin/projects/SwitchBasicTool/switchbasictool/manual_test.py:1)
+- [client.py](./SwitchBasicTool/switchbasictool/client.py:13)
+- [models.py](./SwitchBasicTool/switchbasictool/models.py:10)
+- [vendors.py](./SwitchBasicTool/switchbasictool/vendors.py:13)
+- [switchbasictool/manual_test.py](./SwitchBasicTool/switchbasictool/manual_test.py:1)
 
 ## 后续建议
 
