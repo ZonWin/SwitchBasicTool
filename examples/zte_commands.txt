@@ -1,0 +1,5 @@
+# ZTE / ZXR10 smoke-test commands
+show version
+show running-config | include hostname
+show ip interface brief
+show interface brief

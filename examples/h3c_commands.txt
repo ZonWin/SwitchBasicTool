@@ -1,0 +1,4 @@
+# H3C / Comware smoke-test commands
+display version
+display current-configuration | include sysname
+display interface brief
