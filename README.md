@@ -10,6 +10,10 @@
 - 适合作为库文件被其他项目直接调用
 - 自带一个命令行手工测试脚本，方便拿真实交换机联调
 
+## 设计文档
+
+- [厂商常用指令函数集扩展方案](docs/vendor-operations-plan.md)
+
 ## 适用场景
 
 这个库更适合做“连接层”和“会话层”基础能力，例如：
@@ -190,6 +194,32 @@ config = ConnectionConfig(
 with NetworkDeviceClient(config) as client:
     print(client.send_command("show version").output)
 ```
+
+### Huawei / H3C 常用函数层
+
+在底层 `send_command()` 之上，项目现在提供了一层轻量的厂商常用函数封装，当前优先覆盖 `huawei` 和 `h3c`：
+
+```python
+from switchbasictool import ConnectionConfig, NetworkDeviceClient, get_operations
+
+config = ConnectionConfig(
+    host="10.10.10.10",
+    protocol="ssh",
+    username="admin",
+    password="password",
+    vendor="huawei",
+)
+
+with NetworkDeviceClient(config) as client:
+    ops = get_operations(client)
+
+    print(ops.get_version().output)
+    print(ops.get_interface_brief().output)
+    print(ops.get_vlan_summary().output)
+    print(ops.get_current_config_snippet("sysname").output)
+```
+
+当前这层统一先返回 `CommandResult`，方便在保留原始回显的前提下逐步继续扩展结构化解析。
 
 ## `ConnectionConfig` 常用参数
 

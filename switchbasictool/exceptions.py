@@ -31,3 +31,7 @@ class TransportClosedError(SwitchBasicToolError):
 
 class VendorProfileNotFoundError(SwitchBasicToolError):
     """Raised when a vendor profile cannot be resolved."""
+
+
+class OperationNotSupportedError(SwitchBasicToolError):
+    """Raised when a vendor operation is unavailable for the current device."""

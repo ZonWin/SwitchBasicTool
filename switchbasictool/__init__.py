@@ -6,12 +6,21 @@ from .exceptions import (
     CommandTimeoutError,
     ConnectionError,
     DependencyMissingError,
+    OperationNotSupportedError,
     PromptNotFoundError,
     SwitchBasicToolError,
     TransportClosedError,
     VendorProfileNotFoundError,
 )
 from .models import CommandResult, ConnectionConfig
+from .operations import (
+    BaseOperations,
+    H3COperations,
+    HuaweiOperations,
+    get_operations,
+    get_operations_class,
+    register_operations_class,
+)
 from .vendors import (
     ARISTA_EOS_PROFILE,
     CISCO_IOS_PROFILE,
@@ -30,6 +39,7 @@ from .vendors import (
 __all__ = [
     "AuthenticationError",
     "ARISTA_EOS_PROFILE",
+    "BaseOperations",
     "CISCO_IOS_PROFILE",
     "CommandResult",
     "CommandTimeoutError",
@@ -38,17 +48,23 @@ __all__ = [
     "DependencyMissingError",
     "GENERIC_PROFILE",
     "H3C_PROFILE",
+    "H3COperations",
     "HUAWEI_VRP_PROFILE",
+    "HuaweiOperations",
     "JUNIPER_JUNOS_PROFILE",
     "NetworkDeviceClient",
+    "OperationNotSupportedError",
     "PromptNotFoundError",
     "SwitchBasicToolError",
     "TransportClosedError",
     "ZTE_ZXR10_PROFILE",
     "VendorProfile",
     "VendorProfileNotFoundError",
+    "get_operations",
+    "get_operations_class",
     "get_vendor_profile",
     "list_vendor_profiles",
+    "register_operations_class",
     "register_vendor_profile",
     "resolve_vendor_profile",
 ]
