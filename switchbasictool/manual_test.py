@@ -41,6 +41,14 @@ DEFAULT_COMMANDS_BY_VENDOR: dict[str, tuple[str, ...]] = {
     "cisco_ios": (
         "show version",
         "show running-config | include hostname",
+        "show interfaces status",
+        "show ip interface brief",
+    ),
+    "aruba_aoscx": (
+        "show version",
+        "show hostname",
+        "show interface brief",
+        "show ip interface brief",
     ),
     "juniper": (
         "show version",

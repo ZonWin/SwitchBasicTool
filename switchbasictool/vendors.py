@@ -152,6 +152,15 @@ ARISTA_EOS_PROFILE = register_vendor_profile(
     )
 )
 
+ARUBA_AOSCX_PROFILE = register_vendor_profile(
+    VendorProfile(
+        name="aruba_aoscx",
+        aliases=("aruba", "aruba_cx", "aoscx", "hpe_aruba", "hp_aruba"),
+        prompt_pattern=r"(?m)[A-Za-z0-9._()/-]+(?:\([^)]+\))?[>#]\s*$",
+        session_init_commands=("no page",),
+    )
+)
+
 ZTE_ZXR10_PROFILE = register_vendor_profile(
     VendorProfile(
         name="zte",

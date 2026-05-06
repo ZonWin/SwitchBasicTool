@@ -31,7 +31,7 @@
 - 按厂商解析结构化命令结果
 - 配置变更事务控制
 
-如果后面要扩展 Huawei / H3C / ZTE / Cisco 的专属操作类，建议继续复用现在这层底座。
+如果后面要扩展 Huawei / H3C / ZTE / Cisco / Aruba 的专属操作类，建议继续复用现在这层底座。
 
 ## 安装
 
@@ -64,6 +64,8 @@ SwitchBasicTool/
 ├── README.md
 ├── pyproject.toml
 ├── examples/
+│   ├── aruba_commands.txt
+│   ├── cisco_commands.txt
 │   ├── h3c_commands.txt
 │   ├── huawei_commands.txt
 │   └── zte_commands.txt
@@ -195,9 +197,9 @@ with NetworkDeviceClient(config) as client:
     print(client.send_command("show version").output)
 ```
 
-### Huawei / H3C / ZTE 常用函数层
+### Huawei / H3C / ZTE / Cisco / Aruba 常用函数层
 
-在底层 `send_command()` 之上，项目现在提供了一层轻量的厂商常用函数封装，当前优先覆盖 `huawei`、`h3c` 和 `zte`：
+在底层 `send_command()` 之上，项目现在提供了一层轻量的厂商常用函数封装，当前优先覆盖 `huawei`、`h3c`、`zte`、`cisco_ios` 和 `aruba_aoscx`：
 
 ```python
 from switchbasictool import ConnectionConfig, NetworkDeviceClient, get_operations
@@ -220,7 +222,8 @@ with NetworkDeviceClient(config) as client:
 ```
 
 当前这层统一先返回 `CommandResult`，方便在保留原始回显的前提下逐步继续扩展结构化解析。
-其中 ZTE 还补了 `get_ip_interface_brief()` 这一类和手册命令直接对应的常用查询入口。
+其中 ZTE、Cisco、Aruba 都补了 `get_ip_interface_brief()` 这一类和各自 CLI 习惯直接对应的常用查询入口。
+Aruba 当前按 `AOS-CX` 体系实现，建议用 `vendor="aruba_aoscx"`，`aruba` / `aruba_cx` / `aoscx` 这些别名也可以直接使用。
 
 ## `ConnectionConfig` 常用参数
 

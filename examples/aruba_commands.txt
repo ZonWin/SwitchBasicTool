@@ -1,0 +1,5 @@
+# Aruba AOS-CX smoke-test commands
+show version
+show hostname
+show interface brief
+show ip interface brief

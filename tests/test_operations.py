@@ -4,8 +4,11 @@ import unittest
 from types import SimpleNamespace
 
 from switchbasictool import CommandResult, OperationNotSupportedError, get_operations
+from switchbasictool import resolve_vendor_profile
 from switchbasictool.operations import (
+    ArubaAOSCXOperations,
     BaseOperations,
+    CiscoIOSOperations,
     H3COperations,
     HuaweiOperations,
     ZTEOperations,
@@ -30,6 +33,10 @@ class FakeClient:
 
 
 class OperationsFactoryTests(unittest.TestCase):
+    def test_cisco_alias_resolves_to_cisco_ios_operations(self) -> None:
+        self.assertIs(get_operations_class("cisco"), CiscoIOSOperations)
+        self.assertIs(get_operations_class("ios"), CiscoIOSOperations)
+
     def test_huawei_alias_resolves_to_huawei_operations(self) -> None:
         self.assertIs(get_operations_class("vrp"), HuaweiOperations)
         self.assertIs(get_operations_class("hw"), HuaweiOperations)
@@ -41,6 +48,11 @@ class OperationsFactoryTests(unittest.TestCase):
     def test_zte_alias_resolves_to_zte_operations(self) -> None:
         self.assertIs(get_operations_class("zxr10"), ZTEOperations)
         self.assertIs(get_operations_class("8900e"), ZTEOperations)
+
+    def test_aruba_alias_resolves_to_aruba_aoscx_operations(self) -> None:
+        self.assertIs(get_operations_class("aruba"), ArubaAOSCXOperations)
+        self.assertIs(get_operations_class("aoscx"), ArubaAOSCXOperations)
+        self.assertIs(get_operations_class("hpe_aruba"), ArubaAOSCXOperations)
 
     def test_unknown_vendor_falls_back_to_base_operations(self) -> None:
         self.assertIs(get_operations_class("unknown_vendor"), BaseOperations)
@@ -117,6 +129,76 @@ class H3COperationsTests(unittest.TestCase):
                 ("display vlan", None),
                 ("display lldp neighbor-information list", 5.0),
                 ("display current-configuration interface Ten-GigabitEthernet1/0/1", None),
+            ],
+        )
+
+
+class CiscoIOSOperationsTests(unittest.TestCase):
+    def test_cisco_ios_common_commands(self) -> None:
+        client = FakeClient("cisco_ios")
+        operations = CiscoIOSOperations(client)
+
+        operations.get_version()
+        operations.get_hostname()
+        operations.get_interface_brief()
+        operations.get_ip_interface_brief(timeout=4.0)
+        operations.get_vlan_summary()
+        operations.get_mac_table()
+        operations.get_arp_table()
+        operations.get_lldp_neighbors()
+        operations.get_running_config()
+        operations.get_current_config_snippet("hostname")
+        operations.get_port_config("GigabitEthernet1/0/1")
+
+        self.assertEqual(
+            client.calls,
+            [
+                ("show version", None),
+                ("show running-config | include ^hostname", None),
+                ("show interfaces status", None),
+                ("show ip interface brief", 4.0),
+                ("show vlan brief", None),
+                ("show mac address-table", None),
+                ("show arp", None),
+                ("show lldp neighbors", None),
+                ("show running-config", None),
+                ("show running-config | include hostname", None),
+                ("show running-config interface GigabitEthernet1/0/1", None),
+            ],
+        )
+
+
+class ArubaAOSCXOperationsTests(unittest.TestCase):
+    def test_aruba_aoscx_common_commands(self) -> None:
+        client = FakeClient("aruba_aoscx")
+        operations = ArubaAOSCXOperations(client)
+
+        operations.get_version()
+        operations.get_hostname()
+        operations.get_interface_brief()
+        operations.get_ip_interface_brief(timeout=2.0)
+        operations.get_vlan_summary()
+        operations.get_mac_table()
+        operations.get_arp_table()
+        operations.get_lldp_neighbors()
+        operations.get_running_config()
+        operations.get_current_config_snippet("hostname")
+        operations.get_port_config("1/1/1")
+
+        self.assertEqual(
+            client.calls,
+            [
+                ("show version", None),
+                ("show hostname", None),
+                ("show interface brief", None),
+                ("show ip interface brief", 2.0),
+                ("show vlan summary", None),
+                ("show mac-address-table", None),
+                ("show arp", None),
+                ("show lldp neighbor-info", None),
+                ("show running-config", None),
+                ("show running-config | include hostname", None),
+                ("show running-config interface 1/1/1", None),
             ],
         )
 
@@ -202,6 +284,14 @@ class BaseOperationsTests(unittest.TestCase):
         operations = HuaweiOperations(FakeClient("huawei"))
         with self.assertRaises(ValueError):
             operations.get_current_config_snippet("sysname\nospf")
+
+
+class VendorProfileResolutionTests(unittest.TestCase):
+    def test_cisco_alias_resolves_to_cisco_ios_profile(self) -> None:
+        self.assertEqual(resolve_vendor_profile("cisco").name, "cisco_ios")
+
+    def test_aruba_alias_resolves_to_aruba_aoscx_profile(self) -> None:
+        self.assertEqual(resolve_vendor_profile("aruba").name, "aruba_aoscx")
 
 
 if __name__ == "__main__":

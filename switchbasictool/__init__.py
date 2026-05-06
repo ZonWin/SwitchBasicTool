@@ -14,7 +14,9 @@ from .exceptions import (
 )
 from .models import CommandResult, ConnectionConfig
 from .operations import (
+    ArubaAOSCXOperations,
     BaseOperations,
+    CiscoIOSOperations,
     H3COperations,
     HuaweiOperations,
     ZTEOperations,
@@ -24,6 +26,7 @@ from .operations import (
 )
 from .vendors import (
     ARISTA_EOS_PROFILE,
+    ARUBA_AOSCX_PROFILE,
     CISCO_IOS_PROFILE,
     GENERIC_PROFILE,
     H3C_PROFILE,
@@ -40,8 +43,11 @@ from .vendors import (
 __all__ = [
     "AuthenticationError",
     "ARISTA_EOS_PROFILE",
+    "ARUBA_AOSCX_PROFILE",
+    "ArubaAOSCXOperations",
     "BaseOperations",
     "CISCO_IOS_PROFILE",
+    "CiscoIOSOperations",
     "CommandResult",
     "CommandTimeoutError",
     "ConnectionConfig",

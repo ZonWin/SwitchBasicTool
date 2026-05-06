@@ -1,0 +1,5 @@
+# Cisco IOS smoke-test commands
+show version
+show running-config | include hostname
+show interfaces status
+show ip interface brief
